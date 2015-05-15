@@ -16,11 +16,11 @@ marchandises([[maïs, riz, ble, ble],
 
 
 /*--------------------
-Affichage du plateau en imprimant chaque pile
+Affichage des marchandises en imprimant chaque pile
 */
 
 affiche_marchandises:- marchandises(X), affiche_piles(X).
-/* X prends la valeur du parametre dans marchandise ==> puis affiche cette liste de piles grâce aux prédicats ci-dessous */ 
+/* X prends la valeur du parametre dans marchandises ==> puis affiche cette liste de piles grâce aux prédicats ci-dessous */ 
 
 %Piles
 affiche_piles([]):- !.
