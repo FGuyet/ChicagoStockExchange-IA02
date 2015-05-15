@@ -120,7 +120,7 @@ affiche_plateau([Marchandises, Bourse, PositionTrader, ReserveJ1, ReserveJ2]):-	
 
 plateau_depart([Marchandises, Bourse, PositionTrader, ReserveJ1, ReserveJ2]):-	bourse(Bourse),
 																				marchandises(Marchandises), 
-																				positionTrader(PositionTrader),
+																				random_between(1,9,PositionTrader),
 																				reserveJoueur1(ReserveJ1),
 																				reserveJoueur2(ReserveJ2).
 
