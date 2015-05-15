@@ -1,5 +1,6 @@
 %Bourse
 bourse([[ble,7],[riz,6],[cacao,6],[cafe,6],[sucre,6],[mais,6]]).
+
 affiche_bourse :- bourse(X) , print(X).
 
 %Marchandises
@@ -12,6 +13,7 @@ marchandises([[maïs, riz, ble, ble],
 [cafe, ble, sucre, cacao],
 [maïs, cacao, cacao, cafe],
 [riz,riz,cafe,cacao]]) .
+
 
 
 
@@ -33,6 +35,26 @@ affiche_pile([T|Q]) :- write(T), write(' '), affiche_pile(Q).
 /*------------------------------*/
 
 
+
+/*--------------------
+Affichage de la première carte de chaque pile
+*/
+
+affiche_marchandises_top:- write('|'), marchandises(X), affiche_piles_top(X).
+/* X prends la valeur du parametre dans marchandises ==> puis affiche cette liste de piles grâce aux prédicats ci-dessous */ 
+
+%Piles
+affiche_piles_top([]):- !.
+affiche_piles_top([T|Q]) :- affiche_pile_top(T), write('\t|'), affiche_piles_top(Q).
+
+%Pile
+affiche_pile_top([]):-write("VIDE").
+affiche_pile_top([T|_]) :- write(T).
+
+
+/*------------------------------*/
+
+
 %PositionTrader
 positionTrader(1).
 
@@ -42,6 +64,13 @@ reserveJoueur1([]).
 %ReserveJoueur2
 reserveJoueur2([]).
 
+%Plateau
+%Plateau([Marchandises, Bourse, PositionTrader, ReserveJoueur1, ReserveJoueur2]).
+
+/*
+
 %PlateauDepart
 plateau(append(bourse,marchandises, positionTrader, reserveJoueur1,reserveJoueur2)).
 affiche_plateau :- plateau(X) , print(X).
+
+*/
