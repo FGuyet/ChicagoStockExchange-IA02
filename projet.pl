@@ -21,9 +21,7 @@ marchandises([[maïs, riz, ble, ble],
 Affichage des marchandises en imprimant chaque pile
 */
 
-affiche_marchandises:- 	write('\nVoici les piles et leur contenu :\n'),
-						write('---------------------------------\n'),
-						marchandises(X), affiche_piles(X), write('\n\n').
+affiche_marchandises:- marchandises(X), affiche_piles(X).
 /* X prends la valeur du parametre dans marchandises ==> puis affiche cette liste de piles grâce aux prédicats ci-dessous */ 
 
 %Piles
@@ -42,9 +40,7 @@ affiche_pile([T|Q]) :- write(T), write(' '), affiche_pile(Q).
 Affichage de la première carte de chaque pile
 */
 
-affiche_marchandises_top:- 	write('\nVoici les cartes au sommet de chaque pile :\n'),
-							write('-------------------------------------------\n'),
-							write('|'), marchandises(X), affiche_piles_top(X), write('\n\n').
+affiche_marchandises_top:- write('|'), marchandises(X), affiche_piles_top(X).
 /* X prends la valeur du parametre dans marchandises ==> puis affiche cette liste de piles grâce aux prédicats ci-dessous */ 
 
 %Piles
