@@ -1,7 +1,19 @@
 %Bourse
 bourse([[ble,7],[riz,6],[cacao,6],[cafe,6],[sucre,6],[mais,6]]).
 
-affiche_bourse :- bourse(X) , print(X).
+
+/*Affichage de la bourse*/
+
+affiche_bourse :- 	write('\nVoici la bourse :\n'),
+					write('-----------------\n'),
+					bourse(X) , affiche_valeurs(X),
+					write('\n').
+
+affiche_valeurs([]).
+affiche_valeurs([T|Q]):- affiche_valeur(T), affiche_valeurs(Q).
+
+affiche_valeur([Nom,Valeur]):- write(Nom), write(' :\t'), write(Valeur), write('\n').
+
 
 %Marchandises
 marchandises([[maïs, riz, ble, ble],
@@ -22,11 +34,12 @@ Affichage des marchandises en imprimant chaque pile
 
 affiche_marchandises:- 	write('\nVoici les piles et leur contenu :\n'),
 						write('---------------------------------\n'),
-						marchandises(X), affiche_piles(X), write('\n\n').
+						marchandises(X), affiche_piles(X),
+						write('\n').
 /* X prends la valeur du parametre dans marchandises ==> puis affiche cette liste de piles grâce aux prédicats ci-dessous */ 
 
 %Piles
-affiche_piles([]):- !.
+affiche_piles([]).
 affiche_piles([T|Q]) :- affiche_pile(T), write('\n'), affiche_piles(Q).
 
 %Pile
@@ -43,7 +56,8 @@ Affichage de la première carte de chaque pile
 
 affiche_marchandises_top:- 	write('\nVoici les cartes au sommet de chaque pile :\n'),
 							write('-------------------------------------------\n'),
-							write('|'), marchandises(X), affiche_piles_top(X), write('\n\n').
+							write('|'), marchandises(X), affiche_piles_top(X),
+							write('\n').
 /* X prends la valeur du parametre dans marchandises ==> puis affiche cette liste de piles grâce aux prédicats ci-dessous */ 
 
 %Piles
@@ -60,6 +74,7 @@ affiche_pile_top([T|_]) :- write(T).
 
 %PositionTrader
 positionTrader(1).
+
 
 %ReserveJoueur1
 reserveJoueur1([]).
