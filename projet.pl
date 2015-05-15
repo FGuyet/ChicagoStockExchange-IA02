@@ -12,7 +12,24 @@ marchandises([[maïs, riz, ble, ble],
 [cafe, ble, sucre, cacao],
 [maïs, cacao, cacao, cafe],
 [riz,riz,cafe,cacao]]) .
-affiche_marchandises :- marchandises(X) , print(X).
+
+%affiche_marchandises() :- marchandises(X) , print(X).
+
+
+/*--------------------
+Affichage du plateau en imprimant chaque pile
+*/
+
+%Piles
+affiche_piles([]):- !.
+affiche_piles([T|Q]) :- affiche_pile(T), write('\n'), affiche_piles(Q).
+
+%Pile
+affiche_pile([]).
+affiche_pile([T|Q]) :- write(T), write(' '), affiche_pile(Q).
+
+/*------------------------------*/
+
 
 %PositionTrader
 positionTrader(1).
