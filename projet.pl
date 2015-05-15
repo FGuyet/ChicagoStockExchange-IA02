@@ -65,7 +65,7 @@ affiche_piles_top([]):- !.
 affiche_piles_top([T|Q]) :- affiche_pile_top(T), write('\t|'), affiche_piles_top(Q).
 
 %Pile
-affiche_pile_top([]):-write("VIDE").
+affiche_pile_top([]):- write("VIDE").
 affiche_pile_top([T|_]) :- write(T).
 
 
@@ -78,7 +78,7 @@ positionTrader(1).
 /*Affichage de la position du trader par rapport aux piles */
 affiche_position:- 		positionTrader(P), Nbre is (P-1),
 						affiche_tab(Nbre), write('   T\n'),
-						write('\nLa lettre T représente la position du Trader (position='), write(P), write(')\n').
+						write('\nLa lettre T représente la position du Trader (position='), write(P), write(')\n\n').
 
 affiche_tab(0):- !.
 affiche_tab(N):- write('\t'), Nbre is (N-1), affiche_tab(Nbre).
@@ -90,11 +90,17 @@ reserveJoueur1([]).
 reserveJoueur2([]).
 
 %Plateau ([Marchandises, Bourse, PositionTrader, ReserveJoueur1, ReserveJoueur2])
-affiche_plateau:- affiche_bourse, affiche_marchandises_top, affiche_position.
-/* Il reste plus que l'affichage des réserves	*/
-	
-	
+affiche_plateau:- affiche_bourse, affiche_marchandises_top, affiche_position, affiche_joueur1, affiche_joueur2.
 
+
+/* L'affichage des réserves	des joueurs*/	
+affiche_joueur1 :- write('\nVoici la réserve du Joueur1 :\n'),
+				   write('-----------------------------\n'),
+				   reserveJoueur1(X), affiche_pile(X), write('\n\n').
+
+affiche_joueur2 :- write('\nVoici la réserve du Joueur2 :\n'),
+				   write('-----------------------------\n'),
+				   reserveJoueur2(X), affiche_pile(X), write('\n\n').
 /*
 
 %PlateauDepart
@@ -102,3 +108,8 @@ plateau(append(bourse,marchandises, positionTrader, reserveJoueur1,reserveJoueur
 affiche_plateau :- plateau(X) , print(X).
 
 */
+
+
+
+
+			 
