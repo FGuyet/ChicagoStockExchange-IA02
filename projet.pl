@@ -13,12 +13,14 @@ marchandises([[maïs, riz, ble, ble],
 [maïs, cacao, cacao, cafe],
 [riz,riz,cafe,cacao]]) .
 
-%affiche_marchandises() :- marchandises(X) , print(X).
 
 
 /*--------------------
 Affichage du plateau en imprimant chaque pile
 */
+
+affiche_marchandises:- marchandises(X), affiche_piles(X).
+/* X prends la valeur du parametre dans marchandise ==> puis affiche cette liste de piles grâce aux prédicats ci-dessous */ 
 
 %Piles
 affiche_piles([]):- !.
