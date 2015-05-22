@@ -280,7 +280,6 @@ ajouter_reserve(j2,Garder , _, ReserveJ2, _, NewReserveJ2):-	IntReserveJ2 = Rese
 																
 
 %Changer Marchandises																
-<<<<<<< HEAD
 changer_marchandises(Marchandises, NewPosition, NewMarchandises) :- length(Marchandises, LongueurM),
 																	position_droite(NewPosition, LongueurM, PositionPileD),
 																	position_gauche(NewPosition, LongueurM, PositionPileG),
@@ -308,147 +307,85 @@ construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition
 %Trader en position 2
 construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 2,
 																										nth(2,Marchandises, Pile2),
-=======
-changer_marchandises(Marchandises, NewPosition, NewMarchandises) :- PileD is (NewPosition+1), PileG is (NewPosition-1),
-																	nth(PileG, Marchandises, RecupGauche),
-																	supprimer_tete_liste(RecupGauche, NewRecupGauche),
-																	write('Nouvelle pile gauche : '), affiche_pile(NewRecupGauche), write('\n'),
-																	nth(PileD, Marchandises, RecupDroite),
-																	supprimer_tete_liste(RecupDroite, NewRecupDroite),
-																	write('Nouvelle pile droite : '), affiche_pile(NewRecupDroite),write('\n'),																				
-																	construct_machandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises).
-																				
-%Trader en position 2
-construct_machandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	nth(2,Marchandises, Pile2),
->>>>>>> origin/master
 																										nth(4,Marchandises, Pile4),
 																										nth(5,Marchandises, Pile5),
 																										nth(6,Marchandises, Pile6),
 																										nth(7,Marchandises, Pile7),
 																										nth(8,Marchandises, Pile8),
 																										nth(9,Marchandises, Pile9),
-<<<<<<< HEAD
-=======
-																										NewPosition == 2,
->>>>>>> origin/master
 																										write('Position trader 2'),
 																										NewMarchandises = [NewRecupGauche, Pile2, NewRecupDroite, Pile4, Pile5, Pile6, Pile7, Pile8, Pile9], !.
 
 %Trader en position 3
-<<<<<<< HEAD
 construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 3,
 																										nth(1,Marchandises, Pile1),
-=======
-construct_machandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	nth(1,Marchandises, Pile1),
->>>>>>> origin/master
 																									    nth(3,Marchandises, Pile3),																						
 																										nth(5,Marchandises, Pile5),
 																										nth(6,Marchandises, Pile6),
 																										nth(7,Marchandises, Pile7),
 																										nth(8,Marchandises, Pile8),
 																										nth(9,Marchandises, Pile9),
-<<<<<<< HEAD
-=======
-																										NewPosition == 3,
->>>>>>> origin/master
 																										write('Position trader 3'),
 																										NewMarchandises = [Pile1, NewRecupGauche, Pile3, NewRecupDroite, Pile5, Pile6, Pile7, Pile8, Pile9], !.																						
 
 %Trader en position 4
-<<<<<<< HEAD
 construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 4,
 																										nth(1,Marchandises, Pile1),
-=======
-construct_machandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	nth(1,Marchandises, Pile1),
->>>>>>> origin/master
 																										nth(2,Marchandises, Pile2),
 																										nth(4,Marchandises, Pile4),
 																										nth(6,Marchandises, Pile6),
 																										nth(7,Marchandises, Pile7),
 																										nth(8,Marchandises, Pile8),
 																										nth(9,Marchandises, Pile9),
-<<<<<<< HEAD
-=======
-																										NewPosition == 4,
->>>>>>> origin/master
 																										write('Position trader 4'),
 																										NewMarchandises = [Pile1, Pile2, NewRecupGauche, Pile4, NewRecupDroite, Pile6, Pile7, Pile8, Pile9], !.
 
 %Trader en position 5
-<<<<<<< HEAD
 construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 5,
 																										nth(1,Marchandises, Pile1),
-=======
-construct_machandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	nth(1,Marchandises, Pile1),
->>>>>>> origin/master
 																										nth(2,Marchandises, Pile2),
 																										nth(3,Marchandises, Pile3),
 																										nth(5,Marchandises, Pile5),																										
 																										nth(7,Marchandises, Pile7),
 																										nth(8,Marchandises, Pile8),
 																										nth(9,Marchandises, Pile9),
-<<<<<<< HEAD
-=======
-																										NewPosition == 5,
->>>>>>> origin/master
 																										write('Position trader 5'),
 																										NewMarchandises = [Pile1, Pile2, Pile3, NewRecupGauche, Pile5, NewRecupDroite, Pile7, Pile8, Pile9], !.																									
 																										
 																										
 %Trader en position 6
-<<<<<<< HEAD
 construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 6,
 																										nth(1,Marchandises, Pile1),
-=======
-construct_machandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	nth(1,Marchandises, Pile1),
->>>>>>> origin/master
 																										nth(2,Marchandises, Pile2),
 																										nth(3,Marchandises, Pile3),
 																										nth(4,Marchandises, Pile4),																										
 																										nth(6,Marchandises, Pile6),																										
 																										nth(8,Marchandises, Pile8),
 																										nth(9,Marchandises, Pile9),
-<<<<<<< HEAD
-=======
-																										NewPosition == 6,
->>>>>>> origin/master
 																										write('Position trader 6'),
 																										NewMarchandises = [Pile1, Pile2, Pile3, Pile4, NewRecupGauche, Pile6, NewRecupDroite, Pile8, Pile9], !.
 																										
 %Trader en position 7
-<<<<<<< HEAD
 construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 7,
 																										nth(1,Marchandises, Pile1),
-=======
-construct_machandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	nth(1,Marchandises, Pile1),
->>>>>>> origin/master
 																										nth(2,Marchandises, Pile2),
 																										nth(3,Marchandises, Pile3),
 																										nth(4,Marchandises, Pile4),
 																										nth(5,Marchandises, Pile5),																										
 																										nth(7,Marchandises, Pile7),																										
 																										nth(9,Marchandises, Pile9),
-<<<<<<< HEAD
-=======
-																										NewPosition == 7,
->>>>>>> origin/master
 																										write('Position trader 7'),
 																										NewMarchandises = [Pile1, Pile2, Pile3, Pile4, Pile5, NewRecupGauche, Pile7, NewRecupDroite, Pile9], !.
 																										
 %Trader en position 8
-<<<<<<< HEAD
 construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 8,
 																										nth(1,Marchandises, Pile1),
-=======
-construct_machandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	nth(1,Marchandises, Pile1),
->>>>>>> origin/master
 																										nth(2,Marchandises, Pile2),
 																										nth(3,Marchandises, Pile3),
 																										nth(4,Marchandises, Pile4),
 																										nth(5,Marchandises, Pile5),
 																										nth(6,Marchandises, Pile6),																										
 																										nth(8,Marchandises, Pile8),																										
-<<<<<<< HEAD
 																										write('Position trader 8'),
 																										NewMarchandises = [Pile1, Pile2, Pile3, Pile4, Pile5, Pile6, NewRecupGauche, Pile8, NewRecupDroite], !.
 
@@ -465,11 +402,5 @@ construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition
 																										NewMarchandises = [NewRecupDroite, Pile2, Pile3, Pile4, Pile5, Pile6, Pile7, NewRecupGauche, Pile9], !.
 																										
 																									
-=======
-																										NewPosition == 8,
-																										write('Position trader 8'),
-																										NewMarchandises = [Pile1, Pile2, Pile3, Pile4, Pile5, Pile6, NewRecupGauche, Pile8, NewRecupDroite], !.
-																										
->>>>>>> origin/master
 supprimer_tete_liste([],[]).
 supprimer_tete_liste([_|Y],Y).																
