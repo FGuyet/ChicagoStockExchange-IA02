@@ -10,7 +10,7 @@ jeu :- plateau_depart(P), boucle_jeu(P).
 
 /* Le jeu s'arrêtre lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
 boucle_jeu([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3, write('Le jeu est termine'),!.
-boucle_jeu(Plateau):- affiche_plateau(Plateau),  demander_coup(Coup,Plateau), joueur_coup(Plateau, Coup, NewPlateau), jeu_boucle(NewPlateau).
+boucle_jeu(Plateau):- affiche_plateau(Plateau),  demander_coup(Coup,Plateau), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeu(NewPlateau).
 
 
 
@@ -347,12 +347,14 @@ affiche_joueur2(ReserveJ2) :- 	write('\nVoici la reserve du Joueur2 :\n'),
 
 /* Ajout d'un produit à la réserve d'un joueur */
 
-ajouter_reserve(j1,Garder , ReserveJ1, _, NewReserveJ1,_):- 	IntReserveJ1 = ReserveJ1,
-																append(IntReserveJ1,[Garder], NewReserveJ1).
+%j1
+ajouter_reserve(j1,Garder, ReserveJ1, ReserveJ2, NewReserveJ1 , NewReserveJ2):- 	append(ReserveJ1,[Garder], NewReserveJ1),
+																					NewReserveJ2 = ReserveJ2.
 
+%j2
+ajouter_reserve(j2,Garder, ReserveJ1, ReserveJ2, NewReserveJ1 , NewReserveJ2):-		NewReserveJ1 = ReserveJ1, 
+																					append(ReserveJ2,[Garder], NewReserveJ2).
 
-ajouter_reserve(j2,Garder , _, ReserveJ2, _, NewReserveJ2):-	IntReserveJ2 = ReserveJ2,
-																append(IntReserveJ2,[Garder], NewReserveJ2).
 
 																
 
