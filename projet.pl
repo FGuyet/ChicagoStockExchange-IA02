@@ -365,8 +365,8 @@ ajouter_reserve(j2,Garder, ReserveJ1, ReserveJ2, NewReserveJ1 , NewReserveJ2):-	
 /* Interface jeu-utilisateur pour que le joueur choississe son coup */
 
 demander_coup([Joueur,Deplacement,Garder,Jeter], [Marchandises, _, PositionTrader, _, _]) :-		
-													write('Quel joueur ? '), read(Joueur), 
-													write('Deplacement ? '), read(Deplacement), 
+													demander_joueur(Joueur), 
+													demander_deplacement(Deplacement), 
 													length(Marchandises, LongueurM),
 													changer_position(PositionTrader, Deplacement, LongueurM, NewPosition),
 													write(NewPosition),
@@ -374,6 +374,35 @@ demander_coup([Joueur,Deplacement,Garder,Jeter], [Marchandises, _, PositionTrade
 													affiche_position(NewPosition),
 													write('Quel gardez-vous ? '), read(Garder),
 													write('Que jetez-vous ? '), read(Jeter).
+
+/* demander_joueur permet de demander le joueur, jusque j1 ou j2 soit rentré par l'utilisateur*/
+
+demander_joueur(Joueur):-	write('Quel est le joueur ? '), read(JoueurSaisi),
+							traitement_joueur_saisi(JoueurSaisi,Joueur).
+						
+traitement_joueur_saisi(JoueurSaisi, Joueur) :-	\+joueur_possible(JoueurSaisi), write('Veuillez rentrer j1 ou j2 (j minuscule)\n'),
+												demander_joueur(Joueur),!.
+
+traitement_joueur_saisi(JoueurSaisi, Joueur) :-	joueur_possible(JoueurSaisi), Joueur = JoueurSaisi,!.
+
+joueur_possible(JoueurSaisi):- JoueurSaisi == j1,!.
+joueur_possible(JoueurSaisi):- JoueurSaisi == j2,!.
+
+
+/* demander_deplacement permet de demander le déplacement, jusque Deplacement = 1,2,3 soit rentré par l'utilisateur*/
+
+demander_deplacement(Deplacement) :- 	write(' Quel deplacement souhaitez vous faire ? '), read(DeplacementSaisi), 
+										traitement_deplacement_saisi(DeplacementSaisi, Deplacement).
+
+traitement_deplacement_saisi(DeplacementSaisi, Deplacement) :-	\+deplacement_possible(DeplacementSaisi),
+																write('Veuillez rentrer un deplacement egal a 1, 2 ou 3 \n'),
+																demander_deplacement(Deplacement),!.
+
+traitement_deplacement_saisi(DeplacementSaisi, Deplacement) :- 	deplacement_possible(DeplacementSaisi), Deplacement = DeplacementSaisi,!.										
+
+deplacement_possible(DeplacementSaisi) :-	DeplacementSaisi == 1,!.
+deplacement_possible(DeplacementSaisi) :-	DeplacementSaisi == 2,!.
+deplacement_possible(DeplacementSaisi) :-	DeplacementSaisi == 3,!.
 
 
 /*---------------*/
