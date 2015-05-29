@@ -372,12 +372,12 @@ demander_coup([Joueur,Deplacement,Garder,Jeter], [Marchandises, _, PositionTrade
 													write(NewPosition),
 													affiche_marchandises_top(Marchandises),
 													affiche_position(NewPosition),
-													write('Quel gardez-vous ? '), read(Garder),
-													write('Que jetez-vous ? '), read(Jeter).
+													demander_garder(Garder),
+													demander_jeter(Jeter).
 
 /* demander_joueur permet de demander le joueur, jusque j1 ou j2 soit rentré par l'utilisateur*/
 
-demander_joueur(Joueur):-	write('Quel est le joueur ? '), read(JoueurSaisi),
+demander_joueur(Joueur):-	write('\nQuel joueur joue son tour ? '), read(JoueurSaisi),
 							traitement_joueur_saisi(JoueurSaisi,Joueur).
 						
 traitement_joueur_saisi(JoueurSaisi, Joueur) :-	\+joueur_possible(JoueurSaisi), write('Veuillez rentrer j1 ou j2 (j minuscule)\n'),
@@ -391,7 +391,7 @@ joueur_possible(JoueurSaisi):- JoueurSaisi == j2,!.
 
 /* demander_deplacement permet de demander le déplacement, jusque Deplacement = 1,2,3 soit rentré par l'utilisateur*/
 
-demander_deplacement(Deplacement) :- 	write(' Quel deplacement souhaitez vous faire ? '), read(DeplacementSaisi), 
+demander_deplacement(Deplacement) :- 	write('\nQuel deplacement souhaitez vous faire ? '), read(DeplacementSaisi), 
 										traitement_deplacement_saisi(DeplacementSaisi, Deplacement).
 
 traitement_deplacement_saisi(DeplacementSaisi, Deplacement) :-	\+deplacement_possible(DeplacementSaisi),
@@ -403,6 +403,41 @@ traitement_deplacement_saisi(DeplacementSaisi, Deplacement) :- 	deplacement_poss
 deplacement_possible(DeplacementSaisi) :-	DeplacementSaisi == 1,!.
 deplacement_possible(DeplacementSaisi) :-	DeplacementSaisi == 2,!.
 deplacement_possible(DeplacementSaisi) :-	DeplacementSaisi == 3,!.
+
+
+/* demander_garder permet de demander le produit à garder, jusque le produit soit acceptable */
+
+demander_garder(Garder):-	write('\nQuel produit voulez vous garder ?'), read(GarderSaisi), traitement_garder_saisi(GarderSaisi, Garder).
+
+
+traitement_garder_saisi(GarderSaisi, Garder) :-	\+produit_possible(GarderSaisi),
+												write('Veuillez rentrer un produit existant, en minuscule sans accent (ble, riz, cacao, cafe, sucre, mais)\n'),
+												demander_garder(Garder),!.
+
+traitement_garder_saisi(GarderSaisi, Garder) :- produit_possible(GarderSaisi), Garder = GarderSaisi,!.	
+
+
+
+/* demander_jeter permet de demander le produit à jeter, jusque le produit soit acceptable */
+
+demander_jeter(Jeter):-	write('\nQuel produit voulez vous jeter ?'), read(JeterSaisi), traitement_jeter_saisi(JeterSaisi, Jeter).
+
+
+traitement_jeter_saisi(JeterSaisi, Jeter) :-	\+produit_possible(JeterSaisi),
+												write('Veuillez rentrer un produit existant, en minuscule sans accent (ble, riz, cacao, cafe, sucre, mais)\n'),
+												demander_jeter(Jeter),!.
+
+traitement_jeter_saisi(JeterSaisi, Jeter) :- 	produit_possible(JeterSaisi), Jeter = JeterSaisi,!.
+
+
+/*Produit possible vérifie que le produit saisi est acceptable */								
+
+produit_possible(ProduitSaisi) :-	ProduitSaisi == ble,!.
+produit_possible(ProduitSaisi) :-	ProduitSaisi == riz,!.
+produit_possible(ProduitSaisi) :-	ProduitSaisi == cacao,!.
+produit_possible(ProduitSaisi) :-	ProduitSaisi == cafe,!.
+produit_possible(ProduitSaisi) :-	ProduitSaisi == sucre,!.
+produit_possible(ProduitSaisi) :-	ProduitSaisi == mais,!.
 
 
 /*---------------*/
