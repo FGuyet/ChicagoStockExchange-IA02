@@ -4,13 +4,15 @@
 /*----------------------------------------*/
 
 
+
 /* Le jeu se lance en rentrant écrivant la commande suivante dans GNU Prolog : jeu. */
 
 jeu :- plateau_depart(P), boucle_jeu(P).
 
 /* Le jeu s'arrêtre lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
-boucle_jeu([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3, write('Le jeu est termine'),!.
-boucle_jeu(Plateau):- affiche_plateau(Plateau),  demander_coup(Coup,Plateau), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeu(NewPlateau).
+
+boucle_jeu([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3, write('Le jeu est termine'), retract(joueurEnCours(_)),!.
+boucle_jeu(Plateau):- affiche_plateau(Plateau), changer_joueur, demander_coup(Coup,Plateau), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeu(NewPlateau).
 
 
 
@@ -22,7 +24,9 @@ plateau_depart([Marchandises, Bourse, PositionTrader, ReserveJ1, ReserveJ2]):-	b
 																				marchandises(Marchandises), 
 																				random(1,9,PositionTrader),
 																				reserveJoueur1(ReserveJ1),
-																				reserveJoueur2(ReserveJ2).
+																				reserveJoueur2(ReserveJ2),
+																				asserta(joueurEnCours(j2)).
+																				%j1commence
 
 /* Affichage du plateau */
 
@@ -365,7 +369,8 @@ ajouter_reserve(j2,Garder, ReserveJ1, ReserveJ2, NewReserveJ1 , NewReserveJ2):-	
 /* Interface jeu-utilisateur pour que le joueur choississe son coup */
 
 demander_coup([Joueur,Deplacement,Garder,Jeter], [Marchandises, _, PositionTrader, _, _]) :-		
-													demander_joueur(Joueur), 
+													joueurEnCours(Joueur), /* demander_joueur(Joueur), */
+													write('C\'est au tour de '), write(Joueur), write(' de jouer !'), nl,
 													demander_deplacement(Deplacement), 
 													length(Marchandises, LongueurM),
 													changer_position(PositionTrader, Deplacement, LongueurM, NewPosition),
@@ -377,16 +382,16 @@ demander_coup([Joueur,Deplacement,Garder,Jeter], [Marchandises, _, PositionTrade
 
 /* demander_joueur permet de demander le joueur, jusque j1 ou j2 soit rentré par l'utilisateur*/
 
-demander_joueur(Joueur):-	write('\nQuel joueur joue son tour ? '), read(JoueurSaisi),
-							traitement_joueur_saisi(JoueurSaisi,Joueur).
+/* # demander_joueur(Joueur):-	write('\nQuel joueur joue son tour ? '), read(JoueurSaisi),
+# 								traitement_joueur_saisi(JoueurSaisi,Joueur).
 						
-traitement_joueur_saisi(JoueurSaisi, Joueur) :-	\+joueur_possible(JoueurSaisi), write('Veuillez rentrer j1 ou j2 (j minuscule)\n'),
-												demander_joueur(Joueur),!.
+# traitement_joueur_saisi(JoueurSaisi, Joueur) :-	\+joueur_possible(JoueurSaisi), write('Veuillez rentrer j1 ou j2 (j minuscule)\n'),
+# 												demander_joueur(Joueur),!.
 
-traitement_joueur_saisi(JoueurSaisi, Joueur) :-	joueur_possible(JoueurSaisi), Joueur = JoueurSaisi,!.
+# traitement_joueur_saisi(JoueurSaisi, Joueur) :-	joueur_possible(JoueurSaisi), Joueur = JoueurSaisi,!.
 
-joueur_possible(JoueurSaisi):- JoueurSaisi == j1,!.
-joueur_possible(JoueurSaisi):- JoueurSaisi == j2,!.
+# joueur_possible(JoueurSaisi):- JoueurSaisi == j1,!.
+# joueur_possible(JoueurSaisi):- JoueurSaisi == j2,!. */
 
 
 /* demander_deplacement permet de demander le déplacement, jusque Deplacement = 1,2,3 soit rentré par l'utilisateur*/
@@ -493,7 +498,10 @@ produits_a_cote(Garder, Jeter, ProduitGauche, ProduitDroite) :-	ProduitGauche ==
 
 jouer_coup(Plateau, Coup, NewPlateau) :-	\+coup_possible(Plateau,Coup),
 											write('ATTENTION : Le coup n\'est pas possible \n'),
+											changer_joueur, 
+											/*permet de revenir au même joueur*/
 											NewPlateau = Plateau,!. 
+
 /* Si le coup n'est pas possible, on renvoie le plateau de départ pour que le jeu reprenne au bon endroit */
 											
 jouer_coup(	[Marchandises, Bourse, PositionTrader, ReserveJ1, ReserveJ2],
@@ -508,3 +516,12 @@ jouer_coup(	[Marchandises, Bourse, PositionTrader, ReserveJ1, ReserveJ2],
 						changer_bourse(Bourse,Jeter,NewBourse), 
 						ajouter_reserve(Joueur, Garder, ReserveJ1, ReserveJ2, NewReserveJ1, NewReserveJ2), 
 						changer_marchandises(Marchandises, NewPositionTrader,NewMarchandises),!.
+
+
+/*----------------*/
+/* CHANGER JOUEUR */
+/*----------------*/												
+
+changer_joueur:- retract(joueurEnCours(j1)), asserta(joueurEnCours(j2)),!.
+changer_joueur:- retract(joueurEnCours(j2)), asserta(joueurEnCours(j1)),!.
+
