@@ -407,19 +407,6 @@ demander_coup([Joueur,Deplacement,Garder,Jeter], [Marchandises, _, PositionTrade
 													demander_garder(Garder),
 													demander_jeter(Jeter).
 
-/* demander_joueur permet de demander le joueur, jusque j1 ou j2 soit rentré par l'utilisateur*/
-
-/* # demander_joueur(Joueur):-	write('\nQuel joueur joue son tour ? '), read(JoueurSaisi),
-# 								traitement_joueur_saisi(JoueurSaisi,Joueur).
-						
-# traitement_joueur_saisi(JoueurSaisi, Joueur) :-	\+joueur_possible(JoueurSaisi), write('Veuillez rentrer j1 ou j2 (j minuscule)\n'),
-# 												demander_joueur(Joueur),!.
-
-# traitement_joueur_saisi(JoueurSaisi, Joueur) :-	joueur_possible(JoueurSaisi), Joueur = JoueurSaisi,!.
-
-# joueur_possible(JoueurSaisi):- JoueurSaisi == j1,!.
-# joueur_possible(JoueurSaisi):- JoueurSaisi == j2,!. */
-
 
 /* demander_deplacement permet de demander le déplacement, jusque Deplacement = 1,2,3 soit rentré par l'utilisateur*/
 
@@ -439,7 +426,7 @@ deplacement_possible(DeplacementSaisi) :-	DeplacementSaisi == 3,!.
 
 /* demander_garder permet de demander le produit à garder, jusque le produit soit acceptable */
 
-demander_garder(Garder):-	write('\nQuel produit voulez vous garder ?'), read(GarderSaisi), traitement_garder_saisi(GarderSaisi, Garder).
+demander_garder(Garder):-	write('\nQuel produit voulez vous garder ? '), read(GarderSaisi), traitement_garder_saisi(GarderSaisi, Garder).
 
 
 traitement_garder_saisi(GarderSaisi, Garder) :-	\+produit_possible(GarderSaisi),
@@ -452,7 +439,7 @@ traitement_garder_saisi(GarderSaisi, Garder) :- produit_possible(GarderSaisi), G
 
 /* demander_jeter permet de demander le produit à jeter, jusque le produit soit acceptable */
 
-demander_jeter(Jeter):-	write('\nQuel produit voulez vous jeter ?'), read(JeterSaisi), traitement_jeter_saisi(JeterSaisi, Jeter).
+demander_jeter(Jeter):-	write('\nQuel produit voulez vous jeter ? '), read(JeterSaisi), traitement_jeter_saisi(JeterSaisi, Jeter).
 
 
 traitement_jeter_saisi(JeterSaisi, Jeter) :-	\+produit_possible(JeterSaisi),
@@ -524,7 +511,9 @@ produits_a_cote(Garder, Jeter, ProduitGauche, ProduitDroite) :-	ProduitGauche ==
 /*-------------*/												
 
 jouer_coup(Plateau, Coup, NewPlateau) :-	\+coup_possible(Plateau,Coup),
-											write('ATTENTION : Le coup n\'est pas possible \n'),
+											write('\n\n/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\ \n'),
+											write('/!\\ATTENTION : Le coup n\'est pas possible /!\\ \n'),
+											write('/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\/!\\ \n'),
 											changer_joueur, 
 											/*permet de revenir au même joueur*/
 											NewPlateau = Plateau,!. 
@@ -551,4 +540,43 @@ jouer_coup(	[Marchandises, Bourse, PositionTrader, ReserveJ1, ReserveJ2],
 
 changer_joueur:- retract(joueurEnCours(j1)), asserta(joueurEnCours(j2)),!.
 changer_joueur:- retract(joueurEnCours(j2)), asserta(joueurEnCours(j1)),!.
+
+
+
+
+
+/*==================================*/
+/*==================================*/
+/* PARTIE INTELLIGENCE ARTIFICIELLE */
+/*==================================*/
+/*==================================*/
+
+
+/*----------------*/
+/* COUP POSSIBLES */
+/*----------------*/
+
+coups_possibles(Plateau,ListeCoupsPossibles) :- coups_par_deplacement(Plateau, 1, CoupsEn1), 
+												coups_par_deplacement(Plateau, 2, CoupsEn2),
+												coups_par_deplacement(Plateau, 3, CoupsEn3),
+												append(CoupsEn1, CoupsEn2, CoupsEn12),
+												append(CoupsEn12,CoupsEn3, ListeCoupsPossibles).
+
+
+coups_par_deplacement([Marchandises,_, PositionTrader, _, _], Deplacement, CoupsDeplacement):-
+							length(Marchandises, LongueurM),
+							recuperer_gauche(PositionTrader, Marchandises, LongueurM, ProduitGauche),
+							recuperer_droite(PositionTrader, Marchandises, LongueurM, ProduitDroite),
+							Coup1 = [_, Deplacement,ProduitGauche, ProduitDroite],
+							Coup2 = [_, Deplacement,ProduitDroite, ProduitGauche],
+							append(Coup1,Coup2, CoupsDeplacement).
+
+
+
+deplacements_regles([1,2,3]).
+
+produits_regles([mais, ble, cacao, cafe, sucre, riz]).
+
+
+
 
