@@ -7,7 +7,7 @@
 
 /* Le jeu se lance en rentrant écrivant la commande suivante dans GNU Prolog : jeu. */
 
-jeu :- plateau_depart(P), boucle_jeu(P).
+jeu :- 	asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeu(P).
 
 /* Le jeu s'arrêtre lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
 
@@ -21,11 +21,10 @@ boucle_jeu(Plateau):- affiche_plateau(Plateau), changer_joueur, demander_coup(Co
 /*---------*/
 
 plateau_depart([Marchandises, Bourse, PositionTrader, ReserveJ1, ReserveJ2]):-	bourse(Bourse),
-																				marchandises(Marchandises), 
+																				marchandises_depart(Marchandises), 
 																				random(1,9,PositionTrader),
 																				reserveJoueur1(ReserveJ1),
-																				reserveJoueur2(ReserveJ2),
-																				asserta(joueurEnCours(j2)).
+																				reserveJoueur2(ReserveJ2).
 																				%j1commence
 
 /* Affichage du plateau */
@@ -35,24 +34,52 @@ affiche_plateau([Marchandises, Bourse, PositionTrader, ReserveJ1, ReserveJ2]):-	
 																				affiche_position(PositionTrader),
 																				affiche_joueur1(ReserveJ1),
 																				affiche_joueur2(ReserveJ2).
+marchandises_depart(NewMarchandises) :- liste_marchandises_dispo(Liste), 
+										melanger_liste(Liste, [], Marchandises), 
+										creer_sous_liste(Marchandises, [], NewMarchandises).
+										
 
+ajout_tete(X,L,[X|L]).
+
+supprimer_element(_,[],[]).
+supprimer_element(X, [X|Q], Q).
+supprimer_element(X,[T|Q],L):- X\==T , ajout_tete(T,L2,L), supprimer_element(X,Q,L2), !.		
 
 /*--------------*/
 /* MARCHANDISES */
 /*--------------*/
 
-marchandises(	[	
-				[mais, riz, ble, ble],
-				[ble, mais, sucre, riz],
-				[cafe, sucre, cacao, riz],
-				[cafe, mais, sucre, mais],
-				[cacao, mais, ble, sucre],
-				[riz, cafe, sucre, ble],
-				[cafe, ble, sucre, cacao],
-				[mais, cacao, cacao, cafe],
-				[riz,riz,cafe,cacao]
-				]
-			).
+liste_marchandises_dispo( [ ble, ble, ble, ble, ble, ble, 
+							mais, mais, mais, mais, mais, mais, 
+							riz, riz, riz, riz, riz, riz,
+							sucre, sucre, sucre, sucre, sucre, sucre,
+							cafe, cafe, cafe, cafe, cafe, cafe,
+							cacao, cacao, cacao, cacao, cacao, cacao
+							]
+						).
+
+
+/* melanger_lise prend la Liste, la mélange et met la nouvelle liste mélangée dans Marchandises */
+
+melanger_liste(Liste, MT, Marchandises) :- Liste=[_|[]], nth(1, Liste, Marchandise), append([Marchandise], MT, Marchandises), !.
+
+melanger_liste(Liste, MT, Marchandises) :-     length(Liste, LongueurListe), 
+											   Liste\=[_|[]],											   
+											   random(1,LongueurListe,PositionListe), 											   
+											   nth(PositionListe, Liste, Marchandise),
+											   supprimer_element(Marchandise, Liste, NewListe),											   
+											   append([Marchandise], MT, MT2),											   
+											   melanger_liste(NewListe, MT2, Marchandises), !.
+
+
+/* Décompose la liste en 9 sous listes */
+
+creer_sous_liste([], NM, NM). 
+
+creer_sous_liste([E1, E2, E3, E4|Q], NMTemp, NM) :- append([[E1, E2, E3, E4]], NMTemp, NMTemp2),
+													        creer_sous_liste(Q, NMTemp2, NM).
+
+		
 
 
 /*Affichage des marchandises en imprimant chaque pile*/
