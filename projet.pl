@@ -592,6 +592,9 @@ produits_regles([mais, ble, cacao, cafe, sucre, riz]).
 /* MEILLEUR COUP */
 /*---------------*/
 
+meilleur_coup(Plateau, MeilleurCoup):- 	coups_possibles(Plateau, ListeCoupsPossibles),
+										scores_coups_possibles(Plateau,ListeCoupsPossibles, ListeCoupsPossiblesScores),
+										coup_score_max(ListeCoupsPossiblesScores,[MeilleurCoup,ScoreMax]).
 
 /*calcul du score d'un joueur*/
 
@@ -615,12 +618,29 @@ affiche_score(Joueur,Plateau):- calcul_score_joueur(Joueur, Plateau, Score),
 								write('Score = '), write(Score), nl.
 
 
+/*scores_coups_possibles recupere le score du joueur après chaque coup possible*/ 
 
 scores_coups_possibles(Plateau, [], []):-!.
+
 scores_coups_possibles(Plateau,[[Joueur|QueueCoup]|Q], ListeCoupsPossiblesScores):-
 				jouer_coup_machine(Plateau,[Joueur|QueueCoup],NewPlateau),
 				calcul_score_joueur(Joueur,NewPlateau, Score),
 				append([[Joueur|QueueCoup]], [Score], ScoreCoup),
 				scores_coups_possibles(Plateau,Q, ListeCoupsPossiblesScoresQueue),
 				append(ListeCoupsPossiblesScoresQueue, [ScoreCoup] ,ListeCoupsPossiblesScores).
-						
+
+
+/*coup_score_max recupère le coup qui a le score max, avec son score*/
+
+coup_score_max([], CoupMax, CoupMax):-!.
+
+coup_score_max([[Coup, Score]|Q], [CoupMaxPrecedent, ScoreMaxPrecedent], CoupMax) :- 
+				Score > ScoreMaxPrecedent,
+				coup_score_max(Q,[Coup, Score], CoupMax),!.
+		
+coup_score_max([[Coup, Score]|Q], [CoupMaxPrecedent, ScoreMaxPrecedent], CoupMax) :- 
+				/*Score <= ScoreMaxPrecedent,*/
+				coup_score_max(Q,[CoupMaxPrecedent, ScoreMaxPrecedent], CoupMax),!.
+
+coup_score_max(ListeScore,CoupMax):- coup_score_max(ListeScore,[_,0],CoupMax).
+
