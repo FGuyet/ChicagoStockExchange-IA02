@@ -7,12 +7,34 @@
 
 /* Le jeu se lance en rentrant écrivant la commande suivante dans GNU Prolog : jeu. */
 
-jeu :- 	asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeu(P).
+
+
+/* jeu Humain vs Humain */
+
+jeuHH :- 	asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeuHH(P).
 
 /* Le jeu s'arrêtre lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
 
-boucle_jeu([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3, write('Le jeu est termine'), retract(joueurEnCours(_)),!.
-boucle_jeu(Plateau):- affiche_plateau(Plateau), changer_joueur, demander_coup(Coup,Plateau), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeu(NewPlateau).
+boucle_jeuHH([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3, write('Le jeu est termine'), retract(joueurEnCours(_)),!.
+boucle_jeuHH(Plateau):- affiche_plateau(Plateau), changer_joueur, demander_coup(Coup,Plateau), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeuHH(NewPlateau).
+
+
+
+jeuHM :- asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeuHM(P).
+
+/* Le jeu s'arrêtre lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
+
+boucle_jeuHM([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3, write('Le jeu est termine'), retract(joueurEnCours(_)),!.
+boucle_jeuHM(Plateau):- joueurEnCours(j2), affiche_plateau(Plateau), changer_joueur, demander_coup(Coup,Plateau), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeuHM(NewPlateau).
+boucle_jeuHM(Plateau):- joueurEnCours(j1), affiche_plateau(Plateau), changer_joueur, coup_machine(Plateau,Coup), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeuHM(NewPlateau).
+
+coup_machine(Plateau,Coup):-	nl,write('L\'ordinateur joue son tour: ... *reflexion intense*'), nl,
+							 	meilleur_coup(Plateau, [_, Deplacement, Garder, Jeter]),
+							 	write('Déplacement:'), write(Deplacement),nl,
+							 	write('L\'ordinateur garde:'), write(Garder), nl,
+							 	write('L\'ordinateur jette:'), write(Jeter),nl,nl,
+							 	joueurEnCours(Joueur),
+							 	Coup=[Joueur, Deplacement, Garder, Jeter].
 
 
 
