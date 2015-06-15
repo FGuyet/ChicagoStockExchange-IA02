@@ -171,7 +171,41 @@ changer_marchandises(Marchandises, NewPosition, NewMarchandises) :- length(March
 /* Reconstruction des Marchandises en fonction de la position du Trader (on enleve un produit à droite et à gauche) */
 																		
 supprimer_tete_liste([],[]).
-supprimer_tete_liste([_|Y],Y).	
+supprimer_tete_liste([_|Y],Y).
+
+
+/*construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :- 	length([TM|QM], longueurM),
+																							Position==2, longueurM==2,
+																							append(NewRecupGauche, QM, Marchandises),!.*/
+
+decouper_liste_deux_derniers(Liste, [], Liste) :- length(Liste, LongueurL), LongueurL ==2,!.
+decouper_liste_deux_derniers([T|Q], DebutListe, FinListe) :- 	decouper_liste_deux_derniers(Q, DebutListeInt, FinListe), 
+																append([T],DebutListeInt,DebutListe).
+																				
+/*construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :-
+																							
+construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :- 	NewRecupDroite==[],Position==0, Marchandises=QM, !.
+
+construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :- 	Position==0, Marchandises=[NewRecupDroite|QM], !.
+
+																							
+construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :- 	NewRecupGauche==[], Position==2, NewPosition is (Position-1),
+																							construct_marchandises(QM, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises), 
+																							Marchandises=NewMarchandises,!.
+																							
+																																														
+construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :- 	Position==2, NewPosition is (Position-1),
+																							construct_marchandises(QM, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises),																							
+																							Marchandises=[NewRecupGauche|NewMarchandises],!.
+																							
+																							
+
+construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :- 	NewPosition is (Position-1),
+																							construct_marchandises(QM, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises),
+																							Marchandises=[TM|NewMarchandises].
+
+*/
+
 
 
 %Trader en position 1
@@ -273,8 +307,7 @@ construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition
 																										nth(6,Marchandises, Pile6),
 																										nth(7,Marchandises, Pile7),
 																										nth(9,Marchandises, Pile9),
-																										NewMarchandises = [NewRecupDroite, Pile2, Pile3, Pile4, Pile5, Pile6, Pile7, NewRecupGauche, Pile9], !.
-																												
+																										NewMarchandises = [NewRecupDroite, Pile2, Pile3, Pile4, Pile5, Pile6, Pile7, NewRecupGauche, Pile9], !.																									
 /*--------*/
 /* BOURSE */
 /*--------*/
@@ -296,76 +329,10 @@ affiche_valeur([Nom,Valeur]):- write(Nom), write(' :\t'), write(Valeur), nl.
 
 /* Changer la bourse selon le produit jeté */
 
-%Ble
-changer_bourse(Bourse,ble,NewBourse):- 	nth(1,Bourse, Ble),
-										nth(2, Ble, ValeurBle),
-										NewValeurBle is ValeurBle-1,
-										NewBle =[ble, NewValeurBle],
-										nth(2,Bourse, Riz),
-										nth(3,Bourse, Cacao),
-										nth(4,Bourse, Cafe),
-										nth(5,Bourse, Sucre),
-										nth(6,Bourse, Mais),
-										NewBourse = [NewBle, Riz, Cacao, Cafe, Sucre, Mais],!.
-
-%Riz
-changer_bourse(Bourse,riz,NewBourse):- 	nth(1,Bourse, Ble),
-										nth(2,Bourse, Riz),
-										nth(2, Riz, ValeurRiz),
-										NewValeurRiz is ValeurRiz-1,
-										NewRiz =[riz, NewValeurRiz],
-										nth(3,Bourse, Cacao),
-										nth(4,Bourse, Cafe),
-										nth(5,Bourse, Sucre),
-										nth(6,Bourse, Mais),
-										NewBourse = [Ble, NewRiz, Cacao, Cafe, Sucre, Mais],!.
-
-%Cacao
-changer_bourse(Bourse,cacao,NewBourse):- nth(1,Bourse, Ble),
-										nth(2,Bourse, Riz),
-										nth(3,Bourse, Cacao),
-										nth(2, Cacao, ValeurCacao),
-										NewValeurCacao is ValeurCacao-1,
-										NewCacao =[cacao, NewValeurCacao],
-										nth(4,Bourse, Cafe),
-										nth(5,Bourse, Sucre),
-										nth(6,Bourse, Mais),
-										NewBourse = [Ble, Riz, NewCacao, Cafe, Sucre, Mais],!.
-%Cafe
-changer_bourse(Bourse,cafe,NewBourse):- nth(1,Bourse, Ble),
-										nth(2,Bourse, Riz),
-										nth(3,Bourse, Cacao),
-										nth(4,Bourse, Cafe),
-										nth(2, Cafe, ValeurCafe),
-										NewValeurCafe is ValeurCafe-1,
-										NewCafe =[cafe, NewValeurCafe],
-										nth(5,Bourse, Sucre),
-										nth(6,Bourse, Mais),
-										NewBourse = [Ble, Riz, Cacao, NewCafe, Sucre, Mais],!.
-
-%Sucre
-changer_bourse(Bourse,sucre,NewBourse):- nth(1,Bourse, Ble),
-										nth(2,Bourse, Riz),
-										nth(3,Bourse, Cacao),
-										nth(4,Bourse, Cafe),
-										nth(5,Bourse, Sucre),
-										nth(2, Sucre, ValeurSucre),
-										NewValeurSucre is ValeurSucre-1,
-										NewSucre =[sucre, NewValeurSucre],
-										nth(6,Bourse, Mais),
-										NewBourse = [Ble, Riz, Cacao, Cafe, NewSucre, Mais],!.
-
-%Mais
-changer_bourse(Bourse,mais,NewBourse):- nth(1,Bourse, Ble),
-										nth(2,Bourse, Riz),
-										nth(3,Bourse, Cacao),
-										nth(4,Bourse, Cafe),
-										nth(5,Bourse, Sucre),
-										nth(6,Bourse, Mais),
-										nth(2, Mais, ValeurMais),
-										NewValeurMais is ValeurMais-1,
-										NewMais =[mais, NewValeurMais],
-										NewBourse = [Ble, Riz, Cacao, Cafe, Sucre, NewMais],!.
+changer_bourse([[Produit, Valeur]|Q],Produit, NewBourse) :- 	NewValeur is (Valeur-1),
+																NewBourse=[[Produit, NewValeur]|Q], !.
+changer_bourse([[P, Valeur]|Q],Produit, Bourse) :-		changer_bourse(Q, Produit, FinBourse),
+													 	append([[P, Valeur]],FinBourse,	Bourse).
 
 
 
@@ -619,8 +586,9 @@ coups_par_deplacement([Marchandises,_, PositionTrader, _, _], Deplacement, Coups
 							NewPositionTrader is (PositionTrader + Deplacement),
 							recuperer_gauche(NewPositionTrader, Marchandises, LongueurM, ProduitGauche),
 							recuperer_droite(NewPositionTrader, Marchandises, LongueurM, ProduitDroite),
-							Coup1 = [_, Deplacement,ProduitGauche, ProduitDroite],
-							Coup2 = [_, Deplacement,ProduitDroite, ProduitGauche],
+							joueurEnCours(Joueur),
+							Coup1 = [Joueur, Deplacement,ProduitGauche, ProduitDroite],
+							Coup2 = [Joueur, Deplacement,ProduitDroite, ProduitGauche],
 							append([Coup1],[Coup2], CoupsDeplacement).
 
 produits_regles([mais, ble, cacao, cafe, sucre, riz]).
@@ -633,6 +601,11 @@ produits_regles([mais, ble, cacao, cafe, sucre, riz]).
 meilleur_coup(Plateau, MeilleurCoup):- 	coups_possibles(Plateau, ListeCoupsPossibles),
 										scores_coups_possibles(Plateau,ListeCoupsPossibles, ListeCoupsPossiblesScores),
 										coup_score_max(ListeCoupsPossiblesScores,[MeilleurCoup,ScoreMax]).
+
+/*version avec MINIMAX */
+meilleur_coup2(Plateau, MeilleurCoup) :- 	liste_score_coups_possibles2(Plateau, ListeCoupsPossiblesScores),
+											coup_score_max(ListeCoupsPossiblesScores,[[MeilleurCoup,MeilleurCoupOpposant],ScoreMax]).
+
 
 /*calcul du score d'un joueur*/
 
@@ -667,7 +640,6 @@ scores_coups_possibles(Plateau,[[Joueur|QueueCoup]|Q], ListeCoupsPossiblesScores
 				scores_coups_possibles(Plateau,Q, ListeCoupsPossiblesScoresQueue),
 				append(ListeCoupsPossiblesScoresQueue, [ScoreCoup] ,ListeCoupsPossiblesScores).
 
-
 /*coup_score_max recupère le coup qui a le score max, avec son score*/
 
 coup_score_max([], CoupMax, CoupMax):-!.
@@ -680,5 +652,71 @@ coup_score_max([[Coup, Score]|Q], [CoupMaxPrecedent, ScoreMaxPrecedent], CoupMax
 				/*Score <= ScoreMaxPrecedent,*/
 				coup_score_max(Q,[CoupMaxPrecedent, ScoreMaxPrecedent], CoupMax),!.
 
-coup_score_max(ListeScore,CoupMax):- coup_score_max(ListeScore,[_,0],CoupMax).
+coup_score_max(ListeScore,CoupMax):- coup_score_max(ListeScore,[_,-2000000],CoupMax).
 
+
+/***********/
+/* MINIMAX */
+/***********/
+
+
+liste_score_coups_possibles2(Plateau, ListeCoupsPossibles):- 	meilleur_coup_par_deplacement2(Plateau, 1, MeilleurCoupsEn1), 
+																meilleur_coup_par_deplacement2(Plateau, 2, MeilleurCoupsEn2),
+																meilleur_coup_par_deplacement2(Plateau, 3, MeilleurCoupsEn3),
+																append(MeilleurCoupsEn1, MeilleurCoupsEn2, MeilleurCoupsEn12),
+																append(MeilleurCoupsEn12,MeilleurCoupsEn3, ListeCoupsPossibles).
+
+meilleur_coup_par_deplacement2([Marchandises,Bourse, PositionTrader, R1, R2], Deplacement, [MeilleurCoupsDeplacement]):-
+						Plateau= [Marchandises,Bourse, PositionTrader, R1, R2],
+
+						length(Marchandises, LongueurM),
+						NewPositionTrader is (PositionTrader + Deplacement),
+						recuperer_gauche(NewPositionTrader, Marchandises, LongueurM, ProduitGauche),
+						recuperer_droite(NewPositionTrader, Marchandises, LongueurM, ProduitDroite),
+
+						/*recuperation des joueurs*/
+						joueurEnCours(Joueur), changer_joueur, joueurEnCours(Opposant), changer_joueur,
+						
+						Coup1 = [Joueur, Deplacement,ProduitGauche, ProduitDroite],
+
+						changer_joueur,
+						/*calcul du score du joueur après Coup1 */
+						jouer_coup_machine(Plateau, [Joueur, Deplacement,ProduitGauche, ProduitDroite],NewPlateau),
+						calcul_score_joueur(Joueur,NewPlateau, ScoreJoueur),
+
+						
+						/*recherche du meilleur_coup de l'opposant*/
+						coups_possibles(NewPlateau, ListeCoupsSuivantsPossibles),
+
+						scores_coups_possibles(NewPlateau, ListeCoupsSuivantsPossibles, ListeCoupsSuivantsPossiblesScore),
+						coup_score_max(ListeCoupsSuivantsPossiblesScore, [[Opposant|QMeilleurCoupOpposant], ScoreMaxOpposant]),
+						
+						ScoreMinimax1 is (ScoreJoueur - ScoreMaxOpposant),
+						CoupMinimax1= [[Coup1, [Opposant|QMeilleurCoupOpposant]],ScoreMinimax1],
+
+						Coup2 = [Joueur, Deplacement,ProduitDroite, ProduitGauche],
+
+						/*calcul du score du joueur après Coup1 */
+						jouer_coup_machine(Plateau, [Joueur, Deplacement,ProduitDroite, ProduitGauche],NewPlateau2),
+						calcul_score_joueur(Joueur,NewPlateau2, ScoreJoueur2),
+
+						/*recherche du meilleur_coup de l'opposant*/
+						coups_possibles(NewPlateau2, ListeCoupsSuivantsPossibles2),
+						scores_coups_possibles(NewPlateau2, ListeCoupsSuivantsPossibles2, ListeCoupsSuivantsPossiblesScore2),
+						coup_score_max(ListeCoupsSuivantsPossiblesScore2, [[Opposant|QMeilleurCoupOpposant2], ScoreMaxOpposant2]),
+			
+						ScoreMinimax2 is (ScoreJoueur2 - ScoreMaxOpposant2),
+						CoupMinimax2= [[Coup2,[Opposant|QMeilleurCoupOpposant2]], ScoreMinimax2],
+						coup_score_max([CoupMinimax1,CoupMinimax2], MeilleurCoupsDeplacement).
+
+
+meilleur_coup_direct(Plateau, MeilleurCoup):- 	coups_possibles(Plateau, ListeCoupsPossibles),
+												scores_coups_possibles(Plateau,ListeCoupsPossibles, ListeCoupsPossiblesScores),
+												coup_score_max(ListeCoupsPossiblesScores,MeilleurCoup,ScoreMax).
+
+
+
+
+
+changer_joueur(j1, j2):-!.
+changer_joueur(j2, j1):-!.
