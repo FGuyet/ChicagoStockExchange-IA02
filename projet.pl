@@ -13,21 +13,37 @@
 
 jeuHH :- 	asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeuHH(P).
 
-/* Le jeu s'arrêtre lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
+/* Le jeu s'arrête lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
 
-boucle_jeuHH([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3, write('Le jeu est termine'), retract(joueurEnCours(_)),!.
+boucle_jeuHH([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3,nl,nl, write('LE JEU EST TERMINE'), retract(joueurEnCours(_)),!.
 boucle_jeuHH(Plateau):- affiche_plateau(Plateau), changer_joueur, demander_coup(Coup,Plateau), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeuHH(NewPlateau).
 
 
 
+/* jeu Humain vs Machine */
+
 jeuHM :- asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeuHM(P).
 
-/* Le jeu s'arrêtre lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
+/* Le jeu s'arrête lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
 
-boucle_jeuHM([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3, write('Le jeu est termine'), retract(joueurEnCours(_)),!.
+boucle_jeuHM([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3,nl,nl, write('LE JEU EST TERMINE'), retract(joueurEnCours(_)),!.
 boucle_jeuHM(Plateau):- joueurEnCours(j2), affiche_plateau(Plateau), changer_joueur, demander_coup(Coup,Plateau), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeuHM(NewPlateau).
 boucle_jeuHM(Plateau):- joueurEnCours(j1), affiche_plateau(Plateau), changer_joueur, coup_machine(Plateau,Coup), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeuHM(NewPlateau).
 
+
+
+/* jeu Machine vs Machine */
+
+jeuMM :- asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeuMM(P).
+
+/* Le jeu s'arrête lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
+
+boucle_jeuMM([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3, nl, nl, write('LE JEU EST TERMINE'), retract(joueurEnCours(_)),!.
+boucle_jeuMM(Plateau):- affiche_plateau(Plateau), changer_joueur, coup_machine(Plateau,Coup), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeuMM(NewPlateau).
+
+
+
+/* Coup machine*/
 coup_machine(Plateau,Coup):-	nl,write('L\'ordinateur joue son tour: ... *reflexion intense*'), nl,
 							 	meilleur_coup(Plateau, [_, Deplacement, Garder, Jeter]),
 							 	write('Déplacement:'), write(Deplacement),nl,
