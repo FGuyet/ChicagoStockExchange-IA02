@@ -7,26 +7,53 @@
 
 /* Le jeu se lance en rentrant écrivant la commande suivante dans GNU Prolog : jeu. */
 
+/*enleve les joueurs en cours puis débute une partie */
 
+jeu:- retract(joueurEnCours(_)), jeu,!.
+
+jeu:- 	nl,nl,write('NOUVELLE PARTIE !'), nl, nl,
+		demander_type_jeu(Choix),
+		executer_jeu(Choix).
+
+demander_type_jeu(Choix):- 	nl,nl,write('Quel mode voulez vous executer ?'), nl,nl,
+							write('1 - Humain vs Humain.'), nl,
+							write('2 - Humain vs Machine.'), nl,
+							write('3 - Machine vs Machine.'), nl,
+							read(ChoixSaisi), traitement_type_jeu(ChoixSaisi,Choix).
+
+/* boucle vérifiant que le choix est égal à 1, 2 ou 3 */
+traitement_type_jeu(ChoixSaisi,Choix) :-	\+jeu_possible(ChoixSaisi),
+											write('Veuillez rentrer un choix egal a 1, 2 ou 3 '), nl, nl,
+											demander_type_jeu(Choix),!.
+
+traitement_type_jeu(ChoixSaisi,ChoixSaisi) :- 	jeu_possible(ChoixSaisi),!.										
+
+jeu_possible(1) :-!.
+jeu_possible(2) :-!.
+jeu_possible(3) :-!.
+
+executer_jeu(1):- jeuHH,!.
+executer_jeu(2):- jeuHM,!.
+executer_jeu(3):- jeuMM,!.
 
 /* jeu Humain vs Humain */
 
-jeuHH :- 	asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeuHH(P).
+jeuHH :- nl, nl, write('Jeu Humain vs Humain selectionne'), nl, nl,asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeuHH(P).
 
 /* Le jeu s'arrête lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
 
-boucle_jeuHH([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3,nl,nl, write('LE JEU EST TERMINE'), retract(joueurEnCours(_)),!.
+boucle_jeuHH([Marchandises,Bourse,PositionTrader,R1,R2]):- length(Marchandises, LongueurM), LongueurM < 3,nl, affiche_marchandises(Marchandises),nl, write('LE JEU EST TERMINE'), affiche_gagnant([Marchandises,Bourse,PositionTrader,R1,R2]),retract(joueurEnCours(_)),!.
 boucle_jeuHH(Plateau):- affiche_plateau(Plateau), changer_joueur, demander_coup(Coup,Plateau), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeuHH(NewPlateau).
 
 
 
 /* jeu Humain vs Machine */
 
-jeuHM :- asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeuHM(P).
+jeuHM :- nl, nl, write('Jeu Humain vs Machine selectionne'), nl, nl, asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeuHM(P).
 
 /* Le jeu s'arrête lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
 
-boucle_jeuHM([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3,nl,nl, write('LE JEU EST TERMINE'), retract(joueurEnCours(_)),!.
+boucle_jeuHM([Marchandises,Bourse,PositionTrader,R1,R2]):- length(Marchandises, LongueurM), LongueurM < 3,nl, affiche_marchandises(Marchandises),nl, write('LE JEU EST TERMINE'), affiche_gagnant([Marchandises,Bourse,PositionTrader,R1,R2]),retract(joueurEnCours(_)),!.
 boucle_jeuHM(Plateau):- joueurEnCours(j2), affiche_plateau(Plateau), changer_joueur, demander_coup(Coup,Plateau), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeuHM(NewPlateau).
 boucle_jeuHM(Plateau):- joueurEnCours(j1), affiche_plateau(Plateau), changer_joueur, coup_machine(Plateau,Coup), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeuHM(NewPlateau).
 
@@ -34,19 +61,40 @@ boucle_jeuHM(Plateau):- joueurEnCours(j1), affiche_plateau(Plateau), changer_jou
 
 /* jeu Machine vs Machine */
 
-jeuMM :- asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeuMM(P).
+jeuMM :- nl, nl, write('Jeu Machine vs Machine selectionne'), nl, nl,asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeuMM(P).
 
 /* Le jeu s'arrête lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
 
-boucle_jeuMM([Marchandises,_,_,_,_]):- length(Marchandises, LongueurM), LongueurM < 3, nl, nl, write('LE JEU EST TERMINE'), retract(joueurEnCours(_)),!.
+boucle_jeuMM([Marchandises,Bourse,PositionTrader,R1,R2]):- length(Marchandises, LongueurM), LongueurM < 3, nl, affiche_marchandises(Marchandises), nl, write('LE JEU EST TERMINE'), affiche_gagnant([Marchandises,Bourse,PositionTrader,R1,R2]),retract(joueurEnCours(_)),!.
 boucle_jeuMM(Plateau):- affiche_plateau(Plateau), changer_joueur, coup_machine(Plateau,Coup), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeuMM(NewPlateau).
 
 
 
+affiche_gagnant(PlateauFin):- 	calcul_score_joueur(j1,PlateauFin,ScoreJ1),
+								calcul_score_joueur(j2,PlateauFin,ScoreJ2),
+								ScoreJ1 > ScoreJ2,
+								nl,write('Le joueur j1 gagne ! ('), write(ScoreJ1), write(' vs '), write(ScoreJ2), write(')'),!.
+
+
+affiche_gagnant(PlateauFin):- 	calcul_score_joueur(j1,PlateauFin,ScoreJ1),
+								calcul_score_joueur(j2,PlateauFin,ScoreJ2),
+								ScoreJ1 < ScoreJ2,
+								nl,write('Le joueur j2 gagne ! ('), write(ScoreJ1), write(' vs '), write(ScoreJ2), write(')'),!.
+
+
+
+affiche_gagnant(PlateauFin):- 	calcul_score_joueur(j1,PlateauFin,ScoreJ1),
+								calcul_score_joueur(j2,PlateauFin,ScoreJ2),
+								ScoreJ1 == ScoreJ2,
+								nl,write('Les deux joueurs sont ex-aequo ! Waou ! ('), write(ScoreJ1), write(' vs '), write(ScoreJ2), write(')'),!.
+
+
+
+
 /* Coup machine*/
-coup_machine(Plateau,Coup):-	nl,write('L\'ordinateur joue son tour: ... *reflexion intense*'), nl,
+coup_machine(Plateau,Coup):-	nl,write('L\'ordinateur joue son tour: ... *reflexion intense*'), nl,nl,
 							 	meilleur_coup(Plateau, [_, Deplacement, Garder, Jeter]),
-							 	write('Déplacement:'), write(Deplacement),nl,
+							 	write('Deplacement:'), write(Deplacement),nl,
 							 	write('L\'ordinateur garde:'), write(Garder), nl,
 							 	write('L\'ordinateur jette:'), write(Jeter),nl,nl,
 							 	joueurEnCours(Joueur),
@@ -68,7 +116,7 @@ plateau_depart([Marchandises, Bourse, PositionTrader, ReserveJ1, ReserveJ2]):-	b
 /* Affichage du plateau */
 
 affiche_plateau([Marchandises, Bourse, PositionTrader, ReserveJ1, ReserveJ2]):-	affiche_bourse(Bourse),
-																				affiche_marchandises_top(Marchandises), 
+																				affiche_marchandises(Marchandises), 
 																				affiche_position(PositionTrader),
 																				affiche_joueur1(ReserveJ1),
 																				affiche_score(j1,[Marchandises, Bourse, PositionTrader, ReserveJ1, ReserveJ2]),
@@ -171,143 +219,77 @@ changer_marchandises(Marchandises, NewPosition, NewMarchandises) :- length(March
 /* Reconstruction des Marchandises en fonction de la position du Trader (on enleve un produit à droite et à gauche) */
 																		
 supprimer_tete_liste([],[]).
-supprimer_tete_liste([_|Y],Y).
+supprimer_tete_liste([_|Y],Y).	
+
+ajout_tete_vide([],L, L).
+ajout_tete_vide(X,L,[X|L]).
 
 
-/*construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :- 	length([TM|QM], longueurM),
-																							Position==2, longueurM==2,
-																							append(NewRecupGauche, QM, Marchandises),!.*/
+supprimer_dernier_element(Liste, []) :- 			length(Liste, LongueurL), LongueurL ==1,!.
+supprimer_dernier_element([T|Q], DebutListe) :- 	supprimer_dernier_element(Q, DebutListeInt), 
+													append([T],DebutListeInt,DebutListe).
 
 decouper_liste_deux_derniers(Liste, [], Liste) :- length(Liste, LongueurL), LongueurL ==2,!.
 decouper_liste_deux_derniers([T|Q], DebutListe, FinListe) :- 	decouper_liste_deux_derniers(Q, DebutListeInt, FinListe), 
 																append([T],DebutListeInt,DebutListe).
-																				
-/*construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :-
-																							
-construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :- 	NewRecupDroite==[],Position==0, Marchandises=QM, !.
 
-construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :- 	Position==0, Marchandises=[NewRecupDroite|QM], !.
-
-																							
-construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :- 	NewRecupGauche==[], Position==2, NewPosition is (Position-1),
-																							construct_marchandises(QM, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises), 
-																							Marchandises=NewMarchandises,!.
-																							
-																																														
-construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :- 	Position==2, NewPosition is (Position-1),
-																							construct_marchandises(QM, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises),																							
-																							Marchandises=[NewRecupGauche|NewMarchandises],!.
-																							
-																							
-
-construct_marchandises([TM|QM], NewRecupGauche, NewRecupDroite, Position, Marchandises) :- 	NewPosition is (Position-1),
-																							construct_marchandises(QM, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises),
-																							Marchandises=[TM|NewMarchandises].
-
-*/
+/*Quand le trader se trouve sur la derniere pile des marchandises : cas spécial*/
 
 
+/*cas NewPosition ==1 */
 
-%Trader en position 1
-construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 1,
-																										nth(1,Marchandises, Pile1),				
-																										nth(3,Marchandises, Pile3),
-																										nth(4,Marchandises, Pile4),
-																										nth(5,Marchandises, Pile5),
-																										nth(6,Marchandises, Pile6),
-																										nth(7,Marchandises, Pile7),
-																										nth(8,Marchandises, Pile8),
-																										NewMarchandises = [Pile1, NewRecupDroite, Pile3, Pile4, Pile5, Pile6, Pile7, Pile8, NewRecupGauche], !.
+construct_marchandises([T|Q], [], NewRecupDroite, 1, NewMarchandises):-
+			supprimer_dernier_element(Q, DebutListeQ),
+			append([T], DebutListeQ, DebutNewMarchandises),
+			supprimer_tete_liste(DebutListeQ, DebutListeQ2),
+			ajout_tete_vide(NewRecupDroite,DebutListeQ2,NewMarchandises),!.
 
+construct_marchandises([T|Q], NewRecupGauche, NewRecupDroite, 1, NewMarchandises):-
+			supprimer_dernier_element(Q, DebutListeQ),
+			append([T], DebutListeQ, DebutNewMarchandises),
+			supprimer_tete_liste(DebutListeQ, DebutListeQ2),
+			ajout_tete_vide(NewRecupDroite,DebutListeQ2,NewDebutListe),
+			append(NewDebutListe, [NewRecupGauche], NewMarchandises),!.
+
+
+/*autres cas (NewPosition !=1) */
+
+construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises):-
+			construct_marchandises2(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises).
 	
-%Trader en position 2
-construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 2,
-																										nth(2,Marchandises, Pile2),
-																										nth(4,Marchandises, Pile4),
-																										nth(5,Marchandises, Pile5),
-																										nth(6,Marchandises, Pile6),
-																										nth(7,Marchandises, Pile7),
-																										nth(8,Marchandises, Pile8),
-																										nth(9,Marchandises, Pile9),
-																										NewMarchandises = [NewRecupGauche, Pile2, NewRecupDroite, Pile4, Pile5, Pile6, Pile7, Pile8, Pile9], !.
 
-%Trader en position 3
-construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 3,
-																										nth(1,Marchandises, Pile1),
-																									    nth(3,Marchandises, Pile3),																						
-																										nth(5,Marchandises, Pile5),
-																										nth(6,Marchandises, Pile6),
-																										nth(7,Marchandises, Pile7),
-																										nth(8,Marchandises, Pile8),
-																										nth(9,Marchandises, Pile9),
-																										NewMarchandises = [Pile1, NewRecupGauche, Pile3, NewRecupDroite, Pile5, Pile6, Pile7, Pile8, Pile9], !.																						
+construct_marchandises2(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-  length(Marchandises, LongueurM), LongueurM==NewPosition,
+																									decouper_liste_deux_derniers(Marchandises, DebutListe, FinListe),
+																									supprimer_tete_liste(DebutListe, DebutListeInt),
+																									supprimer_tete_liste(FinListe, FinListeInt),
+																									ajout_tete_vide(NewRecupDroite, DebutListeInt, NewDebutListe),
+																									ajout_tete_vide(NewRecupGauche, FinListeInt, NewFinListe),
+																									append(NewDebutListe, NewFinListe, NewMarchandises),!.
 
-%Trader en position 4
-construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 4,
-																										nth(1,Marchandises, Pile1),
-																										nth(2,Marchandises, Pile2),
-																										nth(4,Marchandises, Pile4),
-																										nth(6,Marchandises, Pile6),
-																										nth(7,Marchandises, Pile7),
-																										nth(8,Marchandises, Pile8),
-																										nth(9,Marchandises, Pile9),
-																										NewMarchandises = [Pile1, Pile2, NewRecupGauche, Pile4, NewRecupDroite, Pile6, Pile7, Pile8, Pile9], !.
+																							
+																							
+construct_marchandises2([_|QM], _, NewRecupDroite, NewPosition, NewMarchandises) :- 	NewRecupDroite==[],NewPosition==0, 
+																									NewMarchandises=QM, !.																							
+construct_marchandises2([_|QM], _, NewRecupDroite, NewPosition, NewMarchandises) :- 	NewPosition==0, 
+																									NewMarchandises=[NewRecupDroite|QM], !.
 
-%Trader en position 5
-construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 5,
-																										nth(1,Marchandises, Pile1),
-																										nth(2,Marchandises, Pile2),
-																										nth(3,Marchandises, Pile3),
-																										nth(5,Marchandises, Pile5),																										
-																										nth(7,Marchandises, Pile7),
-																										nth(8,Marchandises, Pile8),
-																										nth(9,Marchandises, Pile9),
-																										NewMarchandises = [Pile1, Pile2, Pile3, NewRecupGauche, Pile5, NewRecupDroite, Pile7, Pile8, Pile9], !.																									
-																										
-																										
-%Trader en position 6
-construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 6,
-																										nth(1,Marchandises, Pile1),
-																										nth(2,Marchandises, Pile2),
-																										nth(3,Marchandises, Pile3),
-																										nth(4,Marchandises, Pile4),																										
-																										nth(6,Marchandises, Pile6),																										
-																										nth(8,Marchandises, Pile8),
-																										nth(9,Marchandises, Pile9),
-																										NewMarchandises = [Pile1, Pile2, Pile3, Pile4, NewRecupGauche, Pile6, NewRecupDroite, Pile8, Pile9], !.
-																										
-%Trader en position 7
-construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 7,
-																										nth(1,Marchandises, Pile1),
-																										nth(2,Marchandises, Pile2),
-																										nth(3,Marchandises, Pile3),
-																										nth(4,Marchandises, Pile4),
-																										nth(5,Marchandises, Pile5),																										
-																										nth(7,Marchandises, Pile7),																										
-																										nth(9,Marchandises, Pile9),
-																										NewMarchandises = [Pile1, Pile2, Pile3, Pile4, Pile5, NewRecupGauche, Pile7, NewRecupDroite, Pile9], !.
-																										
-%Trader en position 8
-construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 8,
-																										nth(1,Marchandises, Pile1),
-																										nth(2,Marchandises, Pile2),
-																										nth(3,Marchandises, Pile3),
-																										nth(4,Marchandises, Pile4),
-																										nth(5,Marchandises, Pile5),
-																										nth(6,Marchandises, Pile6),																										
-																										nth(8,Marchandises, Pile8),																										
-																										NewMarchandises = [Pile1, Pile2, Pile3, Pile4, Pile5, Pile6, NewRecupGauche, Pile8, NewRecupDroite], !.
+																							
+construct_marchandises2([_|QM], NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :- 	NewRecupGauche==[], NewPosition==2, 
+																									NewPositionDec is (NewPosition-1),
+																									construct_marchandises2(QM, NewRecupGauche, NewRecupDroite, NewPositionDec, NewMarchandisesInt), 
+																									NewMarchandises=NewMarchandisesInt,!.																				
+construct_marchandises2([_|QM], NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :- 	NewPosition==2, NewPositionDec is (NewPosition-1),
+																									construct_marchandises2(QM, NewRecupGauche, NewRecupDroite, NewPositionDec, NewMarchandisesInt),																							
+																									NewMarchandises=[NewRecupGauche|NewMarchandisesInt],!.																							
+																							
 
-%Trader en position 9
-construct_marchandises(Marchandises, NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :-	NewPosition == 9,
-																										nth(2,Marchandises, Pile2),				
-																										nth(3,Marchandises, Pile3),
-																										nth(4,Marchandises, Pile4),
-																										nth(5,Marchandises, Pile5),
-																										nth(6,Marchandises, Pile6),
-																										nth(7,Marchandises, Pile7),
-																										nth(9,Marchandises, Pile9),
-																										NewMarchandises = [NewRecupDroite, Pile2, Pile3, Pile4, Pile5, Pile6, Pile7, NewRecupGauche, Pile9], !.																									
+construct_marchandises2([TM|QM], NewRecupGauche, NewRecupDroite, NewPosition, NewMarchandises) :- 	NewPositionDec is (NewPosition-1),
+																									construct_marchandises2(QM, NewRecupGauche, NewRecupDroite, NewPositionDec, NewMarchandisesInt),
+																									NewMarchandises=[TM|NewMarchandisesInt].
+
+
+
+
 /*--------*/
 /* BOURSE */
 /*--------*/
@@ -355,7 +337,7 @@ affiche_tab(N):- write('\t'), Nbre is (N-1), affiche_tab(Nbre).
 
 changer_position(PositionTrader, Deplacement, LongueurM, NewPosition ):- 	PositionInt is (PositionTrader + Deplacement) mod LongueurM,
 																			PositionInt == 0 ,
-																			NewPosition is 9 ,!.
+																			NewPosition is LongueurM ,!.
 changer_position(PositionTrader, Deplacement, LongueurM, NewPosition ):- 	NewPosition is (PositionTrader + Deplacement) mod LongueurM,!.
 
 
@@ -482,12 +464,12 @@ coup_possible(	[Marchandises, _, PositionTrader, _,_],
 
 position_droite(NewPosition, LongueurM, PositionD):- 	PositionInt is (NewPosition + 1) mod LongueurM,
 														PositionInt == 0 ,
-														PositionD is 9 ,!.
+														PositionD is LongueurM ,!.
 position_droite(NewPosition, LongueurM, PositionD):- 	PositionD is (NewPosition + 1) mod LongueurM.
 
 position_gauche(NewPosition, LongueurM, PositionG):- 	PositionInt is (NewPosition - 1) mod LongueurM,
 														PositionInt == 0 ,
-														PositionG is 9 ,!.
+														PositionG is LongueurM ,!.
 position_gauche(NewPosition, LongueurM, PositionG):- 	PositionG is (NewPosition - 1) mod LongueurM.
 
 
@@ -577,7 +559,7 @@ coups_possibles(Plateau,ListeCoupsPossibles) :- coups_par_deplacement(Plateau, 1
 												coups_par_deplacement(Plateau, 2, CoupsEn2),
 												coups_par_deplacement(Plateau, 3, CoupsEn3),
 												append(CoupsEn1, CoupsEn2, CoupsEn12),
-												append(CoupsEn12,CoupsEn3, ListeCoupsPossibles).
+												append(CoupsEn12,CoupsEn3, ListeCoupsPossibles). 
 
 /*retourne les deux coups possibles par rapport au deplacement*/
 
@@ -601,6 +583,7 @@ produits_regles([mais, ble, cacao, cafe, sucre, riz]).
 meilleur_coup(Plateau, MeilleurCoup):- 	coups_possibles(Plateau, ListeCoupsPossibles),
 										scores_coups_possibles(Plateau,ListeCoupsPossibles, ListeCoupsPossiblesScores),
 										coup_score_max(ListeCoupsPossiblesScores,[MeilleurCoup,ScoreMax]).
+
 
 /*version avec MINIMAX */
 meilleur_coup2(Plateau, MeilleurCoup) :- 	liste_score_coups_possibles2(Plateau, ListeCoupsPossiblesScores),
