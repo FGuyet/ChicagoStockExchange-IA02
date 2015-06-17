@@ -9,7 +9,7 @@
 
 /*enleve les joueurs en cours puis débute une partie */
 
-jeu:- retract(joueurEnCours(_)), jeu,!.
+jeu:- link_files, retract(joueurEnCours(_)), jeu,!.
 
 jeu:- 	nl,nl,write('NOUVELLE PARTIE !'), nl, nl,
 		demander_type_jeu(Choix),
