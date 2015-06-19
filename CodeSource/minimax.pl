@@ -155,8 +155,17 @@ jeuM1M2 :- nl, nl, write('Jeu Machine nv1 vs Machine nv2 selectionne'), nl, nl,a
 
 /* Le jeu s'arrête lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
 
-boucle_jeuM1M2([Marchandises,Bourse,PositionTrader,R1,R2]):- length(Marchandises, LongueurM), LongueurM < 3,nl, affiche_marchandises(Marchandises),nl, write('LE JEU EST TERMINE'), affiche_gagnant([Marchandises,Bourse,PositionTrader,R1,R2]),retract(joueurEnCours(_)),!.
-boucle_jeuM1M2(Plateau):- joueurEnCours(j1), affiche_plateau(Plateau), changer_joueur, meilleur_coup(Plateau, Coup), jouer_coup(Plateau,Coup, NewPlateau),boucle_jeuM1M2(NewPlateau),!.
-boucle_jeuM1M2(Plateau):- joueurEnCours(j2), affiche_plateau(Plateau), changer_joueur, minimax2(Plateau,Coup), jouer_coup(Plateau, Coup, NewPlateau), boucle_jeuM1M2(NewPlateau),!.
+boucle_jeuM1M2([Marchandises,Bourse,PositionTrader,R1,R2]):- length(Marchandises, LongueurM), LongueurM < 3,nl, affiche_marchandises_top(Marchandises),nl, write('LE JEU EST TERMINE'), affiche_gagnant([Marchandises,Bourse,PositionTrader,R1,R2]),retract(joueurEnCours(_)),!.
+boucle_jeuM1M2(Plateau):- joueurEnCours(j1), affiche_plateau(Plateau), changer_joueur, coup_machine(Plateau, Coup), jouer_coup_machine(Plateau,Coup, NewPlateau),boucle_jeuM1M2(NewPlateau),!.
+boucle_jeuM1M2(Plateau):- joueurEnCours(j2), affiche_plateau(Plateau), changer_joueur, coup_machine_minimax(Plateau,Coup), jouer_coup_machine(Plateau, Coup, NewPlateau), boucle_jeuM1M2(NewPlateau),!.
 
 
+
+
+coup_machine_minimax(Plateau,Coup):-	nl,write('L\'ordinateur joue son tour: ... *reflexion intense*'), nl,nl,
+							 			minimax2(Plateau, [_, Deplacement, Garder, Jeter]),
+								 		write('Deplacement:'), write(Deplacement),nl,
+								 		write('L\'ordinateur garde:'), write(Garder), nl,
+								 		write('L\'ordinateur jette:'), write(Jeter),nl,nl,
+								 		joueurEnCours(Joueur),
+								 		Coup=[Joueur, Deplacement, Garder, Jeter].
