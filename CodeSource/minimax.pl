@@ -169,3 +169,16 @@ coup_machine_minimax(Plateau,Coup):-	nl,write('L\'ordinateur joue son tour: ... 
 								 		write('L\'ordinateur jette:'), write(Jeter),nl,nl,
 								 		joueurEnCours(Joueur),
 								 		Coup=[Joueur, Deplacement, Garder, Jeter].
+
+
+/*type de jeu permettant de confronter l'IA minimax à l'IA minimax de profondeur 4 */
+
+
+jeuMM_minimax:- retract(joueurEnCours(_)), jeuMM_minimax,!.
+jeuMM_minimax :- nl, nl, write('Jeu Machine nv1 vs Machine nv2 selectionne'), nl, nl,asserta(joueurEnCours(j2)), plateau_depart(P), boucle_jeuMM_minimax(P).
+
+/* Le jeu s'arrête lorqu'il reste seulement 2 piles de Jetons dans les marchandises */
+
+boucle_jeuMM_minimax([Marchandises,Bourse,PositionTrader,R1,R2]):- length(Marchandises, LongueurM), LongueurM < 3,nl, affiche_marchandises_top(Marchandises),nl, write('LE JEU EST TERMINE'), affiche_gagnant([Marchandises,Bourse,PositionTrader,R1,R2]),retract(joueurEnCours(_)),!.
+boucle_jeuMM_minimax(Plateau):- affiche_plateau(Plateau), changer_joueur, coup_machine_minimax(Plateau, Coup), jouer_coup_machine(Plateau,Coup, NewPlateau),boucle_jeuMM_minimax(NewPlateau),!.
+
